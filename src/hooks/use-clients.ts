@@ -6,7 +6,7 @@ import {
 
 export const useClients = (): ClientsContextValue => {
   const clients = useContext(ClientsContext);
-  if (clients === null) throw new Error("Clients is null");
+  if (clients === null) throw new Error("ClientsContext is not provided");
 
   return clients;
 };

@@ -44,13 +44,13 @@ const LoginPage = () => {
           type="email"
           placeholder="Correo"
           className="border border-neutral-950 rounded-md px-2 py-1 w-full"
-          {...form.register("email")}
+          {...form.register("email", { required: true })}
         />
         <input
           type="password"
           placeholder="Contraseña"
           className="border border-neutral-950 rounded-md px-2 py-1 w-full"
-          {...form.register("password")}
+          {...form.register("password", { required: true })}
         />
         <div className="text-center">
           <button

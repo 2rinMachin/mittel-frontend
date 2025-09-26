@@ -8,6 +8,7 @@ import { z } from "zod";
 import { LoginRequest } from "../schemas/login-request";
 import { RegisterRequest } from "../schemas/register-request";
 import { env } from "../env";
+import { User } from "../schemas/user";
 
 const c = initContract();
 
@@ -19,7 +20,7 @@ export const contract = c.router(
       body: LoginRequest,
       responses: {
         200: z.object({ token: z.string() }),
-        401: z.object({}),
+        401: z.unknown(),
       },
     },
     register: {
@@ -27,7 +28,16 @@ export const contract = c.router(
       path: "/auth/register",
       body: RegisterRequest,
       responses: {
-        200: z.object({ token: z.string() }),
+        201: z.unknown(),
+        400: z.unknown(),
+      },
+    },
+    getSelf: {
+      method: "GET",
+      path: "/users/self",
+      responses: {
+        200: User,
+        401: z.unknown(),
       },
     },
   },

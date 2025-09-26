@@ -28,8 +28,8 @@ const HomePage = () => {
         <p className="text-center my-8">¡No hay nada por aquí!</p>
       ) : (
         <ul>
-          {articles?.map((article) => (
-            <li key={article._id}>kajadls</li>
+          {articles?.map((article, i) => (
+            <li key={article._id}>Artículo #{i}</li>
           ))}
         </ul>
       )}

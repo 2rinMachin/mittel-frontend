@@ -7,7 +7,7 @@ export interface Props {
   children: ReactNode | null;
 }
 
-export const ClientsContextProvider = ({ children }: Props) => {
+export const ClientsProvider = ({ children }: Props) => {
   const clients = useRef<ClientsContextValue | null>(null);
 
   const createClients = () => {
