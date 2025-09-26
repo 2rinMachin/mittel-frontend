@@ -1,7 +1,10 @@
 import { useContext } from "react";
-import { ClientsContext, type Clients } from "../components/ClientsContext";
+import {
+  ClientsContext,
+  type ClientsContextValue,
+} from "../components/ClientsContext";
 
-export const useClients = (): Clients => {
+export const useClients = (): ClientsContextValue => {
   const clients = useContext(ClientsContext);
   if (clients === null) throw new Error("Clients is null");
 

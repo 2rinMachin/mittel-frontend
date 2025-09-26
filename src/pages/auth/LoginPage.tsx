@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { usersClient } = useClients();
+  const { usersClient, refreshClients } = useClients();
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm({
@@ -26,8 +26,8 @@ const LoginPage = () => {
       return;
     }
 
-    console.log("res.body:", res.body);
     localStorage.setItem("token", res.body.token);
+    refreshClients(res.body.token);
 
     navigate("/");
   };

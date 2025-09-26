@@ -1,22 +1,31 @@
 import { useRef, type ReactNode } from "react";
 import { createUsersClient } from "../api/users";
 import { createArticlesClient } from "../api/articles";
-import { ClientsContext, type Clients } from "./ClientsContext";
+import { ClientsContext, type ClientsContextValue } from "./ClientsContext";
 
 export interface Props {
   children: ReactNode | null;
 }
 
 export const ClientsContextProvider = ({ children }: Props) => {
-  const clients = useRef<Clients | null>(null);
+  const clients = useRef<ClientsContextValue | null>(null);
 
-  if (clients.current === null) {
+  const createClients = () => {
     const token = localStorage.getItem("token");
-    clients.current = {
+    return {
       usersClient: createUsersClient(token),
       articlesClient: createArticlesClient(token),
     };
-  }
+  };
+
+  const refreshClients = () => {
+    clients.current = {
+      ...createClients(),
+      refreshClients,
+    };
+  };
+
+  if (clients.current === null) refreshClients();
 
   return <ClientsContext value={clients.current}>{children}</ClientsContext>;
 };
