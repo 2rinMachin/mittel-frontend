@@ -5,11 +5,7 @@ import { useClients } from "../hooks/use-clients";
 const HomePage = () => {
   const { articlesClient } = useClients();
 
-  const {
-    data: posts,
-    isPending,
-    error,
-  } = useQuery({
+  const { data, isPending, error } = useQuery({
     queryKey: ["articles", "recent"],
     queryFn: () => articlesClient.getRecentArticles(),
   });
@@ -18,17 +14,21 @@ const HomePage = () => {
     if (error) console.error(error);
   }, [error]);
 
+  const articles = data?.body;
+
   return (
     <main className="py-8">
       <h1 className="font-semibold text-3xl text-center">Últimos artículos</h1>
 
       {error ? (
-        <p>Algo salió mal :(</p>
+        <p className="text-center my-8">Algo salió mal :(</p>
       ) : isPending ? (
-        <p>Cargando...</p>
+        <p className="text-center my-8">Cargando...</p>
+      ) : articles?.length === 0 ? (
+        <p className="text-center my-8">¡No hay nada por aquí!</p>
       ) : (
         <ul>
-          {posts.body.map((article) => (
+          {articles?.map((article) => (
             <li key={article._id}>kajadls</li>
           ))}
         </ul>

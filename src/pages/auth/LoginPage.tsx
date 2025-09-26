@@ -21,8 +21,9 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginRequest) => {
     const res = await usersClient.login({ body: data });
 
-    if (res.status !== 200) {
+    if (res.status === 401) {
       setError("Credenciales incorrectas");
+      return;
     }
 
     console.log("res.body:", res.body);
