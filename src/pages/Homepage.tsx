@@ -6,8 +6,8 @@ const HomePage = () => {
   const { articlesClient } = useClients();
 
   const { data, isPending, error } = useQuery({
-    queryKey: ["articles", "recent"],
-    queryFn: () => articlesClient.getRecentArticles(),
+    queryKey: ["articles"],
+    queryFn: () => articlesClient.getArticles(),
   });
 
   useEffect(() => {

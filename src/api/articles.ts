@@ -12,9 +12,15 @@ const c = initContract();
 
 export const contract = c.router(
   {
-    getRecentArticles: {
+    getArticles: {
       method: "GET",
-      path: "/articles/recent",
+      path: "/articles",
+      query: z.object({
+        title: z.string().optional(),
+        tag: z.string().optional(),
+        skip: z.number().optional(),
+        limit: z.number().optional(),
+      }),
       responses: {
         200: z.array(Article),
       },
