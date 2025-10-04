@@ -35,9 +35,7 @@ const Header = () => {
             to={`/users/${user.id}`}
             className="flex gap-x-3 items-center"
           >
-            <span>
-              {user.first_name} {user.last_name}
-            </span>
+            <span>{user.username}</span>
             <LuUser className="border border-neutral-900 rounded-full size-8" />
           </NavLink>
 

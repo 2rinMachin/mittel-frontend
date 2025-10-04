@@ -13,8 +13,7 @@ const RegisterPage = () => {
   const form = useForm({
     resolver: zodResolver(RegisterRequest),
     defaultValues: {
-      first_name: "",
-      last_name: "",
+      username: "",
       email: "",
       password: "",
     },
@@ -49,20 +48,12 @@ const RegisterPage = () => {
         className="rounded-md max-w-md mx-auto px-6 py-4 my-8 space-y-6"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <div className="grid grid-cols-2 gap-4">
-          <input
-            type="text"
-            placeholder="Nombre"
-            className="border border-neutral-950 rounded-md px-2 py-1 w-full"
-            {...form.register("first_name", { required: true })}
-          />
-          <input
-            type="text"
-            placeholder="Apellido"
-            className="border border-neutral-950 rounded-md px-2 py-1 w-full"
-            {...form.register("last_name", { required: true })}
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Nombre de usuario"
+          className="border border-neutral-950 rounded-md px-2 py-1 w-full"
+          {...form.register("username", { required: true })}
+        />
         <input
           type="email"
           placeholder="Correo"
