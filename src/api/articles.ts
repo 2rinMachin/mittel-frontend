@@ -21,6 +21,7 @@ export const contract = c.router(
         title: z.string().optional(),
         tag: z.string().optional(),
         skip: z.number().optional(),
+        authorId: z.string().optional(),
         limit: z.number().optional(),
       }),
       responses: {
