@@ -40,7 +40,7 @@ const RegisterPage = () => {
 
   return (
     <main className="py-8">
-      <h1 className="text-3xl font-semibold text-center">Iniciar sesión</h1>
+      <h1 className="text-3xl font-semibold text-center">Crear cuenta</h1>
 
       <form
         className="rounded-md max-w-md mx-auto px-6 py-4 my-8 space-y-6"

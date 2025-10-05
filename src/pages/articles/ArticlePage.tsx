@@ -2,13 +2,17 @@ import { useParams } from "react-router-dom";
 import { useClients } from "../../hooks/use-clients";
 import { useQuery } from "@tanstack/react-query";
 import type { Comment } from "../../schemas/comment";
-import { LuEye, LuShare2, LuThumbsUp } from "react-icons/lu";
+import { LuEye, LuShare, LuShare2, LuThumbsUp } from "react-icons/lu";
 import { useEffect, useState } from "react";
+import { env } from "../../env";
+import { useAuth } from "../../hooks/use-auth";
 
 const ArticlePage = () => {
   const { id } = useParams();
+  const { user } = useAuth();
   const { articlesClient, engagementClient } = useClients();
   const [mounted, setMounted] = useState(false);
+  const [liked, setLiked] = useState(false);
 
   const { data: articleData } = useQuery({
     queryKey: ["article", id],
@@ -46,6 +50,44 @@ const ArticlePage = () => {
     setMounted(true);
   }, [mounted, engagementClient, id]);
 
+  const sharePost = async () => {
+    const url = `${env.VITE_PUBLIC_URL}/articles/${article._id}`;
+
+    if (navigator.share) {
+      await navigator.share({
+        title: `"${article.title}" en Mittel`,
+        url,
+      });
+    } else if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(url);
+      alert("URL copiada al portapapeles!");
+    } else {
+      return;
+    }
+
+    await engagementClient.recordEvent({
+      body: {
+        post_id: article._id,
+        user_id: user?.id,
+        kind: "share",
+      },
+    });
+  };
+
+  const likePost = async () => {
+    if (liked) return;
+
+    await engagementClient.recordEvent({
+      body: {
+        post_id: article._id,
+        user_id: user?.id,
+        kind: "like",
+      },
+    });
+
+    setLiked(true);
+  };
+
   if (articleData === undefined) {
     return <p className="text-center py-8">Cargando...</p>;
   }
@@ -72,7 +114,7 @@ const ArticlePage = () => {
             <LuEye /> {stats.views}
           </span>
           <span className="flex flex-row gap-x-2 items-center">
-            <LuThumbsUp /> {stats.likes}
+            <LuThumbsUp /> {stats.likes + +liked}
           </span>
           <span className="flex flex-row gap-x-2 items-center">
             <LuShare2 /> {stats.shares}
@@ -84,7 +126,25 @@ const ArticlePage = () => {
         <p>{article.content}</p>
       </article>
 
+      <div className="flex justify-end text-neutral-700 stroke-neutral-700 gap-x-6">
+        <button
+          onClick={likePost}
+          className="flex items-center gap-x-2 cursor-pointer"
+        >
+          <LuThumbsUp />
+          <span>Like</span>
+        </button>
+        <button
+          onClick={sharePost}
+          className="flex items-center gap-x-2 cursor-pointer"
+        >
+          <LuShare />
+          <span>Compartir</span>
+        </button>
+      </div>
+
       <hr className="my-8 border-neutral-400" />
+
       <section>
         <h2 className="text-2xl font-semibold mb-4">
           Comentarios ({comments.length})

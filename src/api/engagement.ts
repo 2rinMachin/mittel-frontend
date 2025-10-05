@@ -25,7 +25,7 @@ export const contract = c.router(
       path: "/events",
       body: CreateEventRequest,
       responses: {
-        200: z.unknown(),
+        201: z.unknown(),
       },
     },
   },
