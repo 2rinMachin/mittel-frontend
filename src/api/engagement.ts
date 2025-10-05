@@ -6,6 +6,8 @@ import {
 } from "@ts-rest/core";
 import { env } from "../env";
 import { EventSummary } from "../schemas/event-summary";
+import { z } from "zod";
+import { CreateEventRequest } from "../schemas/create-event-request";
 
 const c = initContract();
 
@@ -16,6 +18,14 @@ export const contract = c.router(
       path: "/events/:postId",
       responses: {
         200: EventSummary,
+      },
+    },
+    recordEvent: {
+      method: "POST",
+      path: "/events",
+      body: CreateEventRequest,
+      responses: {
+        200: z.unknown(),
       },
     },
   },
