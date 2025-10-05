@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { twJoin } from "tailwind-merge";
 import { useClients } from "../../hooks/use-clients";
 import { useQuery } from "@tanstack/react-query";
 import type { Comment } from "../../schemas/comment";
@@ -126,12 +127,15 @@ const ArticlePage = () => {
         <p>{article.content}</p>
       </article>
 
-      <div className="flex justify-end text-neutral-700 stroke-neutral-700 gap-x-6">
+      <div className="flex justify-end text-neutral-800 stroke-neutral-800 gap-x-6">
         <button
           onClick={likePost}
-          className="flex items-center gap-x-2 cursor-pointer"
+          className={twJoin(
+            "flex items-center gap-x-2",
+            liked ? " text-neutral-400" : "cursor-pointer",
+          )}
         >
-          <LuThumbsUp />
+          <LuThumbsUp className={twJoin(liked && "fill-neutral-400")} />
           <span>Like</span>
         </button>
         <button
