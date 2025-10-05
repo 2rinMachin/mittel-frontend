@@ -11,7 +11,13 @@ import ArticlePage from "./pages/articles/ArticlePage";
 import UserPage from "./pages/users/UserPage";
 import PublishPage from "./pages/articles/PublishPage";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <BrowserRouter>
