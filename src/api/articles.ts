@@ -25,6 +25,16 @@ export const contract = c.router(
         200: z.array(Article),
       },
     },
+    getArticle: {
+      method: "GET",
+      path: "/articles/:id",
+      responses: {
+        200: Article.extend({
+          content: z.string(),
+        }),
+        404: z.unknown(),
+      },
+    },
   },
   {
     strictStatusCodes: true,

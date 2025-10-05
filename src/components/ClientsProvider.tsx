@@ -2,6 +2,7 @@ import { useRef, type ReactNode } from "react";
 import { createUsersClient } from "../api/users";
 import { createArticlesClient } from "../api/articles";
 import { ClientsContext, type ClientsContextValue } from "./ClientsContext";
+import { createCommentsClient } from "../api/comments";
 
 export interface Props {
   children: ReactNode | null;
@@ -10,22 +11,28 @@ export interface Props {
 export const ClientsProvider = ({ children }: Props) => {
   const clients = useRef<ClientsContextValue | null>(null);
 
-  const createClients = () => {
-    const token = localStorage.getItem("token");
+  const createClients = (
+    token: string | null = localStorage.getItem("token"),
+  ) => {
     return {
       usersClient: createUsersClient(token),
       articlesClient: createArticlesClient(token),
+      commentsClient: createCommentsClient(token),
     };
   };
 
-  const refreshClients = () => {
+  const refreshClients = (token?: string | null) => {
     clients.current = {
-      ...createClients(),
+      ...createClients(token),
       refreshClients,
     };
   };
 
   if (clients.current === null) refreshClients();
 
-  return <ClientsContext value={clients.current}>{children}</ClientsContext>;
+  return (
+    <ClientsContext.Provider value={clients.current}>
+      {children}
+    </ClientsContext.Provider>
+  );
 };
