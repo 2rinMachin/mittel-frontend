@@ -7,6 +7,7 @@ import { LuEye, LuShare, LuShare2, LuThumbsUp } from "react-icons/lu";
 import { useEffect, useState } from "react";
 import { env } from "../../env";
 import { useAuth } from "../../hooks/use-auth";
+import { getDeviceInfo } from "../../util/device-info";
 
 const ArticlePage = () => {
   const { id } = useParams();
@@ -41,10 +42,12 @@ const ArticlePage = () => {
   useEffect(() => {
     if (mounted) return;
 
+    const device = getDeviceInfo();
     engagementClient.recordEvent({
       body: {
         post_id: id!,
         kind: "view",
+        device,
       },
     });
 
@@ -66,11 +69,14 @@ const ArticlePage = () => {
       return;
     }
 
+    const device = getDeviceInfo();
+
     await engagementClient.recordEvent({
       body: {
         post_id: article._id,
         user_id: user?.id,
         kind: "share",
+        device,
       },
     });
   };
@@ -78,11 +84,14 @@ const ArticlePage = () => {
   const likePost = async () => {
     if (liked) return;
 
+    const device = getDeviceInfo();
+
     await engagementClient.recordEvent({
       body: {
         post_id: article._id,
         user_id: user?.id,
         kind: "like",
+        device,
       },
     });
 
