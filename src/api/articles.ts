@@ -5,8 +5,10 @@ import {
   type InitClientReturn,
 } from "@ts-rest/core";
 import { z } from "zod";
-import { Article } from "../schemas/article";
+import { Article, ArticleWithContent } from "../schemas/article";
 import { env } from "../env";
+import { CreateArticleRequest } from "../schemas/create-article-request";
+import { Comment } from "../schemas/comment";
 
 const c = initContract();
 
@@ -29,10 +31,27 @@ export const contract = c.router(
       method: "GET",
       path: "/articles/:id",
       responses: {
-        200: Article.extend({
-          content: z.string(),
-        }),
+        200: ArticleWithContent,
         404: z.unknown(),
+      },
+    },
+    createArticle: {
+      method: "POST",
+      path: "/articles",
+      body: CreateArticleRequest,
+      responses: {
+        201: ArticleWithContent,
+      },
+    },
+    getCommentsByPost: {
+      method: "GET",
+      path: "/comments/post/:postId",
+      query: z.object({
+        skip: z.number().optional(),
+        limit: z.number().optional(),
+      }),
+      responses: {
+        200: z.array(Comment),
       },
     },
   },

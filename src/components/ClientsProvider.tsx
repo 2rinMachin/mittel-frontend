@@ -2,7 +2,6 @@ import { useRef, type ReactNode } from "react";
 import { createUsersClient } from "../api/users";
 import { createArticlesClient } from "../api/articles";
 import { ClientsContext, type ClientsContextValue } from "./ClientsContext";
-import { createCommentsClient } from "../api/comments";
 
 export interface Props {
   children: ReactNode | null;
@@ -17,7 +16,6 @@ export const ClientsProvider = ({ children }: Props) => {
     return {
       usersClient: createUsersClient(token),
       articlesClient: createArticlesClient(token),
-      commentsClient: createCommentsClient(token),
     };
   };
 

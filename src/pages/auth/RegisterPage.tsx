@@ -2,11 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useClients } from "../../hooks/use-clients";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { RegisterRequest } from "../../schemas/register-request";
 
 const RegisterPage = () => {
-  const navigate = useNavigate();
   const { usersClient, refreshClients } = useClients();
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +35,7 @@ const RegisterPage = () => {
     localStorage.setItem("token", loginRes.body.token);
     refreshClients(loginRes.body.token);
 
-    navigate("/");
+    window.location.href = "/";
   };
 
   return (

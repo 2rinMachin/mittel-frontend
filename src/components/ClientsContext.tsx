@@ -1,12 +1,11 @@
 import { createContext } from "react";
 import type { ArticlesApiClient } from "../api/articles";
 import type { UsersApiClient } from "../api/users";
-import type { CommentsApiClient } from "../api/comments";
 
 export interface ClientsContextValue {
   usersClient: UsersApiClient;
   articlesClient: ArticlesApiClient;
-  commentsClient: CommentsApiClient;
+  engagementClient: ArticlesApiClient;
   refreshClients: (token: string | null) => void;
 }
 

@@ -1,12 +1,11 @@
 import { useParams } from "react-router-dom";
 import { useClients } from "../../hooks/use-clients";
 import { useQuery } from "@tanstack/react-query";
-import type { ArticleWithContent } from "../../schemas/article";
 import type { Comment } from "../../schemas/comment";
 
 const ArticlePage = () => {
   const { id } = useParams();
-  const { articlesClient, commentsClient } = useClients();
+  const { articlesClient } = useClients();
 
   const { data: articleData, isPending } = useQuery({
     queryKey: ["article", id],
@@ -17,18 +16,22 @@ const ArticlePage = () => {
   const { data: commentsData } = useQuery({
     queryKey: ["comments", id],
     queryFn: () =>
-      commentsClient.getCommentsByPost({
+      articlesClient.getCommentsByPost({
         params: { postId: id! },
         query: { limit: 5 },
       }),
     enabled: !!id,
   });
 
-  if (isPending) return <p className="text-center py-8">Cargando...</p>;
-  if (!articleData)
-    return <p className="text-center py-8">No se encontró el artículo.</p>;
+  if (isPending) {
+    return <p className="text-center py-8">Cargando...</p>;
+  }
 
-  const article = articleData.body as ArticleWithContent;
+  if (!articleData || articleData.status === 404) {
+    return <p className="text-center py-8">No se encontró el artículo.</p>;
+  }
+
+  const article = articleData.body;
   const comments = commentsData?.body ?? [];
 
   return (
@@ -39,10 +42,11 @@ const ArticlePage = () => {
         {new Date(article.createdAt).toLocaleDateString()}
       </p>
 
-      <article className="prose max-w-none mb-10">
+      <article className="prose max-w-none mb-10 text-lg">
         <p>{article.content}</p>
       </article>
 
+      <hr className="my-8 border-neutral-400" />
       <section>
         <h2 className="text-2xl font-semibold mb-4">
           Comentarios ({comments.length})

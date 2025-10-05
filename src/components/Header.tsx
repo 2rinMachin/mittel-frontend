@@ -4,8 +4,9 @@ import { LuLogOut, LuPencil, LuUser } from "react-icons/lu";
 
 const links = [
   {
-    label: "Artículos",
-    to: "/articles",
+    label: "Publicar",
+    to: "/publish",
+    authenticated: true,
   },
 ] as const;
 
@@ -18,17 +19,21 @@ const Header = () => {
 
   return (
     <header className="max-w-5xl mx-auto px-6 py-6 flex justify-between">
-      <NavLink to="/" className="text-2xl font-semibold">
-        <LuPencil className="inline mr-2 mb-1" />
-        Mittel
-      </NavLink>
-      <nav className="flex items-center px-6 space-x-4">
-        {links.map((link) => (
-          <NavLink key={link.to} to={link.to}>
-            {link.label}
-          </NavLink>
-        ))}
-      </nav>
+      <div className="flex items-center">
+        <NavLink to="/" className="text-2xl font-semibold mr-8">
+          <LuPencil className="inline mr-2 mb-1" />
+          Mittel
+        </NavLink>
+        <nav className="flex items-center px-6 space-x-8">
+          {links
+            .filter((link) => !link.authenticated || user)
+            .map((link) => (
+              <NavLink key={link.to} to={link.to}>
+                {link.label}
+              </NavLink>
+            ))}
+        </nav>
+      </div>
       {user ? (
         <div className="flex gap-x-4">
           <NavLink

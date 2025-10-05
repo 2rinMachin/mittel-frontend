@@ -6,6 +6,9 @@ export const env = createEnv({
   client: {
     VITE_USERS_URL: z.string(),
     VITE_ARTICLES_URL: z.string(),
+    VITE_ENGAGEMENT_URL: z.string(),
+    VITE_DISCOVERY_URL: z.string(),
+    VITE_ANALYST_URL: z.string(),
   },
   runtimeEnv: import.meta.env,
   emptyStringAsUndefined: true,

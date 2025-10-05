@@ -7,8 +7,9 @@ import LoginPage from "./pages/auth/LoginPage";
 import Header from "./components/Header";
 import AuthProvider from "./components/AuthProvider";
 import RegisterPage from "./pages/auth/RegisterPage";
-import ArticlesPage from "./pages/articles/ArticlesPage";
 import ArticlePage from "./pages/articles/ArticlePage";
+import UserPage from "./pages/users/UserPage";
+import PublishPage from "./pages/articles/PublishPage";
 
 const queryClient = new QueryClient();
 
@@ -22,10 +23,11 @@ const App = () => (
             <Routes>
               <Route index Component={HomePage} />
               <Route path="*" Component={NotFoundPage} />
-              <Route path="/login" Component={LoginPage} />
-              <Route path="/register" Component={RegisterPage} />
-              <Route path="articles" Component={ArticlesPage} />
+              <Route path="login" Component={LoginPage} />
+              <Route path="register" Component={RegisterPage} />
               <Route path="articles/:id" Component={ArticlePage} />
+              <Route path="users/:id" Component={UserPage} />
+              <Route path="publish" Component={PublishPage} />
             </Routes>
           </div>
         </AuthProvider>

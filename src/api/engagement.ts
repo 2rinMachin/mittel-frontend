@@ -4,23 +4,18 @@ import {
   type InitClientArgs,
   type InitClientReturn,
 } from "@ts-rest/core";
-import { z } from "zod";
 import { env } from "../env";
-import { Comment } from "../schemas/comment";
+import { EventSummary } from "../schemas/event-summary";
 
 const c = initContract();
 
 export const contract = c.router(
   {
-    getCommentsByPost: {
+    getEventsSummary: {
       method: "GET",
-      path: "/comments/post/:postId",
-      query: z.object({
-        skip: z.number().optional(),
-        limit: z.number().optional(),
-      }),
+      path: "/events/:postId",
       responses: {
-        200: z.array(Comment),
+        200: EventSummary,
       },
     },
   },
@@ -28,19 +23,19 @@ export const contract = c.router(
 );
 
 const clientArgs = {
-  baseUrl: env.VITE_ARTICLES_URL,
+  baseUrl: env.VITE_ENGAGEMENT_URL,
   throwOnUnknownStatus: true,
   validateResponse: true,
 } as const satisfies InitClientArgs;
 
-export type CommentsApiClient = InitClientReturn<
+export type EngagementApiClient = InitClientReturn<
   typeof contract,
   typeof clientArgs
 >;
 
-export const createCommentsClient = (
+export const createEngagementClient = (
   token: string | null,
-): CommentsApiClient => {
+): EngagementApiClient => {
   return initClient(contract, {
     ...clientArgs,
     baseHeaders: token ? { Authorization: `Bearer ${token}` } : {},

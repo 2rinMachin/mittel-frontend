@@ -40,6 +40,14 @@ export const contract = c.router(
         401: z.unknown(),
       },
     },
+    getUser: {
+      method: "GET",
+      path: "/users/:id",
+      responses: {
+        200: User,
+        404: z.unknown(),
+      },
+    },
   },
   { strictStatusCodes: true },
 );

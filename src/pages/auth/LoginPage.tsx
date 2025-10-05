@@ -3,10 +3,8 @@ import { useForm } from "react-hook-form";
 import { LoginRequest } from "../../schemas/login-request";
 import { useClients } from "../../hooks/use-clients";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-  const navigate = useNavigate();
   const { usersClient, refreshClients } = useClients();
   const [error, setError] = useState<string | null>(null);
 
@@ -29,7 +27,7 @@ const LoginPage = () => {
     localStorage.setItem("token", res.body.token);
     refreshClients(res.body.token);
 
-    navigate("/");
+    window.location.href = "/";
   };
 
   return (
