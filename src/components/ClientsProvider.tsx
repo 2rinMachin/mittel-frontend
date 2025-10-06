@@ -34,9 +34,5 @@ export const ClientsProvider = ({ children }: Props) => {
 
   if (clients.current === null) refreshClients();
 
-  return (
-    <ClientsContext.Provider value={clients.current}>
-      {children}
-    </ClientsContext.Provider>
-  );
+  return <ClientsContext value={clients.current}>{children}</ClientsContext>;
 };
