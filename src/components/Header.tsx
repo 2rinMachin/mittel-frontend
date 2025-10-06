@@ -1,6 +1,8 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../hooks/use-auth";
-import { LuLogOut, LuPencil, LuUser } from "react-icons/lu";
+import { LuLogOut, LuPencil, LuUser, LuUsers } from "react-icons/lu";
+import { useClients } from "../hooks/use-clients";
+import { useQuery } from "@tanstack/react-query";
 
 const links = [
   {
@@ -27,6 +29,15 @@ const Header = () => {
     window.location.reload();
   };
 
+  const { analystClient } = useClients();
+  const { data: activeUsersData } = useQuery({
+    queryKey: ["active-users"],
+    queryFn: () =>
+      analystClient.countActiveUsers(),
+    refetchInterval: 10_000,
+  });
+  const activeUsers = activeUsersData?.body.user_count;
+
   return (
     <header className="max-w-5xl mx-auto px-6 py-6 flex justify-between">
       <div className="flex items-center">
@@ -44,6 +55,19 @@ const Header = () => {
             ))}
         </nav>
       </div>
+
+      {activeUsers ? (
+        <div className="flex items-center text-sm">
+          <LuUsers className="size-4 mr-1" />
+          {activeUsers} {activeUsers === 1 ? "activo" : "activos"}
+        </div>
+      ) : (
+        <div className="flex items-center text-sm text-neutral-400 animate-pulse">
+          <LuUsers className="size-4 mr-1" />
+          ...
+        </div>
+      )}
+
       {user ? (
         <div className="flex gap-x-4">
           <NavLink
