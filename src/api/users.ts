@@ -48,6 +48,20 @@ export const contract = c.router(
         404: z.unknown(),
       },
     },
+    searchUsers: {
+      method: "GET",
+      path: "/users/all",
+      query: z.object({
+        pattern: z.string(),
+        page: z.number().optional(),
+        page_size: z.number().optional(),
+      }),
+      responses: {
+        200: z.object({
+          results: z.array(User),
+        }),
+      },
+    },
   },
   { strictStatusCodes: true },
 );
