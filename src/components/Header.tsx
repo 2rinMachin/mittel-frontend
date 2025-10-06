@@ -12,9 +12,18 @@ const links = [
 
 const Header = () => {
   const { user } = useAuth();
-  const logout = () => {
+  const { usersClient } = useClients();
+
+  const logout = async () => {
     localStorage.removeItem("token");
-    window.location.reload();
+
+    try {
+      await usersClient.logout(undefined);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      window.location.reload();
+    }
   };
 
   const { analystClient } = useClients();

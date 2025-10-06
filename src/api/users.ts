@@ -23,6 +23,14 @@ export const contract = c.router(
         401: z.unknown(),
       },
     },
+    logout: {
+      method: "POST",
+      path: "/auth/logout",
+      body: z.undefined(),
+      responses: {
+        204: z.unknown(),
+      },
+    },
     register: {
       method: "POST",
       path: "/auth/register",
