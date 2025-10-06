@@ -1,9 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import dayjs from "../util/dayjs";
 import { useClients } from "../hooks/use-clients";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { LuMessageCircle, LuUser } from "react-icons/lu";
 import ArticleList from "../components/ArticleList";
 
 const PAGE_SIZE = 10;
