@@ -7,7 +7,6 @@ import {
 import { env } from "../env";
 import { z } from "zod";
 import { Article } from "../schemas/article";
-import { User } from "../schemas/user";
 
 const c = initContract();
 
@@ -20,11 +19,15 @@ export const contract = c.router(
         200: z.array(Article),
       },
     },
-    discoverUsersByUsername: {
+    discoverFeaturedArticles: {
       method: "GET",
-      path: "/discover/users/name/:username",
+      path: "/discover/articles/featured",
+      query: z.object({
+        limit: z.number().optional(),
+        skip: z.number().optional(),
+      }),
       responses: {
-        200: z.array(User),
+        200: z.array(Article),
       },
     },
   },

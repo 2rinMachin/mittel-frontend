@@ -112,7 +112,7 @@ const ArticlePage = () => {
           <div className="flex justify-end mb-6">
             <button
               onClick={deleteArticle}
-              className="flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 border border-red-200 px-4 py-2 rounded-lg transition"
+              className="flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 border border-red-200 px-4 py-2 rounded-lg transition enabled:cursor-pointer"
             >
               <LuTrash className="size-4" />
               <span>Borrar artículo</span>

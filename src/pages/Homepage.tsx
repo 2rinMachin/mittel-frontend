@@ -6,13 +6,13 @@ import ArticleList from "../components/ArticleList";
 const PAGE_SIZE = 10;
 
 const HomePage = () => {
-  const { articlesClient } = useClients();
+  const { discoveryClient } = useClients();
   const [page, setPage] = useState(0);
 
   const { data, isPending, error } = useQuery({
     queryKey: ["articles", page],
     queryFn: () =>
-      articlesClient.getArticles({
+      discoveryClient.discoverFeaturedArticles({
         query: { skip: page * PAGE_SIZE, limit: PAGE_SIZE },
       }),
   });

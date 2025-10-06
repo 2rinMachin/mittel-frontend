@@ -90,7 +90,7 @@ const Header = () => {
 
                 <button
                   onClick={logout}
-                  className="p-2 rounded-md border border-slate-300 hover:bg-slate-100 transition"
+                  className="p-2 rounded-md border border-slate-300 hover:bg-slate-100 transition enabled:cursor-pointer"
                   title="Cerrar sesión"
                 >
                   <LuLogOut className="size-5 stroke-slate-600" />
