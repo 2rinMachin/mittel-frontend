@@ -44,6 +44,13 @@ export const contract = c.router(
         201: ArticleWithContent,
       },
     },
+    deleteArticle: {
+      method: "DELETE",
+      path: "/articles/:id",
+      responses: {
+        200: z.unknown(),
+      },
+    },
     getCommentsByPost: {
       method: "GET",
       path: "/comments/post/:postId",

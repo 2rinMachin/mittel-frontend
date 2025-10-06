@@ -1,15 +1,16 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { twJoin } from "tailwind-merge";
 import { useClients } from "../../hooks/use-clients";
 import { useQuery } from "@tanstack/react-query";
 import type { Comment } from "../../schemas/comment";
-import { LuEye, LuShare, LuShare2, LuThumbsUp } from "react-icons/lu";
+import { LuEye, LuShare, LuShare2, LuThumbsUp, LuTrash } from "react-icons/lu";
 import { useEffect, useState } from "react";
 import { env } from "../../env";
 import { useAuth } from "../../hooks/use-auth";
 import { getDeviceInfo } from "../../util/device-info";
 
 const ArticlePage = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
   const { articlesClient, engagementClient } = useClients();
@@ -30,7 +31,7 @@ const ArticlePage = () => {
   });
 
   const { data: commentsData } = useQuery({
-    queryKey: ["comments", id],
+    queryKey: ["post-comments", id],
     queryFn: () =>
       articlesClient.getCommentsByPost({
         params: { postId: id! },
@@ -98,6 +99,11 @@ const ArticlePage = () => {
     setLiked(true);
   };
 
+  const deleteArticle = async () => {
+    await articlesClient.deleteArticle({ params: { id: article._id } });
+    navigate(-1);
+  };
+
   if (articleData === undefined) {
     return <p className="text-center py-8">Cargando...</p>;
   }
@@ -113,6 +119,17 @@ const ArticlePage = () => {
 
   return (
     <main className="max-w-3xl mx-auto py-10">
+      {user?.id === article.author.id && (
+        <div className="flex gap-x-4 justify-end">
+          <button
+            onClick={deleteArticle}
+            className="bg-red-300 rounded-md px-3 py-1 cursor-pointer"
+          >
+            <LuTrash className="inline mb-1 mr-2" />
+            Borrar artículo
+          </button>
+        </div>
+      )}
       <h1 className="text-3xl font-bold mb-2">{article.title}</h1>
       <p className="text-neutral-600 mb-4">
         Por {article.author.username} •{" "}
