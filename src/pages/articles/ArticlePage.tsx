@@ -1,13 +1,21 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { twJoin } from "tailwind-merge";
 import { useClients } from "../../hooks/use-clients";
 import { useQuery } from "@tanstack/react-query";
 import type { Comment } from "../../schemas/comment";
-import { LuEye, LuShare, LuShare2, LuThumbsUp, LuTrash } from "react-icons/lu";
+import {
+  LuEye,
+  LuShare,
+  LuShare2,
+  LuThumbsUp,
+  LuTrash,
+  LuCalendar,
+} from "react-icons/lu";
 import { useEffect, useState } from "react";
 import { env } from "../../env";
 import { useAuth } from "../../hooks/use-auth";
 import { getDeviceInfo } from "../../util/device-info";
+import dayjs from "../../util/dayjs";
 
 const ArticlePage = () => {
   const navigate = useNavigate();
@@ -42,60 +50,53 @@ const ArticlePage = () => {
 
   useEffect(() => {
     if (mounted) return;
-
     const device = getDeviceInfo();
     engagementClient.recordEvent({
-      body: {
-        post_id: id!,
-        kind: "view",
-        device,
-      },
+      body: { post_id: id!, kind: "view", device },
     });
-
     setMounted(true);
   }, [mounted, engagementClient, id]);
+
+  if (articleData === undefined)
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-neutral-50 to-blue-50">
+        <p className="text-neutral-500 animate-pulse">Cargando artículo...</p>
+      </main>
+    );
+
+  if (articleData.status === 404)
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-neutral-50 to-blue-50">
+        <p className="text-neutral-500">No se encontró el artículo 😕</p>
+      </main>
+    );
+
+  const article = articleData.body;
+  const stats = statsData?.body;
+  const comments = commentsData?.body ?? [];
 
   const sharePost = async () => {
     const url = `${env.VITE_PUBLIC_URL}/articles/${article._id}`;
 
     if (navigator.share) {
-      await navigator.share({
-        title: `"${article.title}" en Mittel`,
-        url,
-      });
+      await navigator.share({ title: `"${article.title}" en Mittel`, url });
     } else if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(url);
       alert("URL copiada al portapapeles!");
-    } else {
-      return;
     }
 
     const device = getDeviceInfo();
-
     await engagementClient.recordEvent({
-      body: {
-        post_id: article._id,
-        user_id: user?.id,
-        kind: "share",
-        device,
-      },
+      body: { post_id: article._id, user_id: user?.id, kind: "share", device },
     });
   };
 
   const likePost = async () => {
     if (liked) return;
-
     const device = getDeviceInfo();
-
     await engagementClient.recordEvent({
-      body: {
-        post_id: article._id,
-        user_id: user?.id,
-        kind: "like",
-        device,
-      },
+      body: { post_id: article._id, user_id: user?.id, kind: "like", device },
     });
-
     setLiked(true);
   };
 
@@ -104,106 +105,124 @@ const ArticlePage = () => {
     navigate(-1);
   };
 
-  if (articleData === undefined) {
-    return <p className="text-center py-8">Cargando...</p>;
-  }
-
-  if (articleData.status === 404) {
-    return <p className="text-center py-8">No se encontró el artículo.</p>;
-  }
-
-  const article = articleData.body;
-  const comments = commentsData?.body ?? [];
-
-  const stats = statsData?.body;
-
   return (
-    <main className="max-w-3xl mx-auto py-10">
-      {user?.id === article.author.id && (
-        <div className="flex gap-x-4 justify-end">
-          <button
-            onClick={deleteArticle}
-            className="bg-red-300 rounded-md px-3 py-1 cursor-pointer"
-          >
-            <LuTrash className="inline mb-1 mr-2" />
-            Borrar artículo
-          </button>
-        </div>
-      )}
-      <h1 className="text-3xl font-bold mb-2">{article.title}</h1>
-      <p className="text-neutral-600 mb-4">
-        Por {article.author.username} •{" "}
-        {new Date(article.createdAt).toLocaleDateString()}
-      </p>
-      {article.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-3">
-          {article.tags.map((tag) => (
-            <span
-              key={tag}
-              className="bg-neutral-100 text-neutral-700 text-sm px-2 py-1 rounded-md">
-              #{tag}
-            </span>
-          ))}
-        </div>
-      )}
-      {stats && (
-        <div className="text-neutral-600 mb-4 flex items-center gap-x-4">
-          <span className="flex flex-row gap-x-2 items-center">
-            <LuEye /> {stats.views}
-          </span>
-          <span className="flex flex-row gap-x-2 items-center">
-            <LuThumbsUp /> {stats.likes + +liked}
-          </span>
-          <span className="flex flex-row gap-x-2 items-center">
-            <LuShare2 /> {stats.shares}
-          </span>
-        </div>
-      )}
-
-      <article className="prose max-w-none mb-10 text-lg">
-        <p>{article.content}</p>
-      </article>
-
-      <div className="flex justify-end text-neutral-800 stroke-neutral-800 gap-x-6">
-        <button
-          onClick={likePost}
-          className={twJoin(
-            "flex items-center gap-x-2",
-            liked ? " text-neutral-400" : "cursor-pointer",
-          )}
-        >
-          <LuThumbsUp className={twJoin(liked && "fill-neutral-400")} />
-          <span>Like</span>
-        </button>
-        <button
-          onClick={sharePost}
-          className="flex items-center gap-x-2 cursor-pointer"
-        >
-          <LuShare />
-          <span>Compartir</span>
-        </button>
-      </div>
-
-      <hr className="my-8 border-neutral-400" />
-
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">
-          Comentarios ({comments.length})
-        </h2>
-        {comments.length === 0 ? (
-          <p className="text-neutral-600">Aún no hay comentarios.</p>
-        ) : (
-          <ul className="space-y-4">
-            {comments.map((c: Comment) => (
-              <li key={c._id} className="border rounded-lg p-3">
-                <p className="text-sm text-neutral-700 mb-1">{c.content}</p>
-                <p className="text-xs text-neutral-500">
-                  {c.author.username} • {new Date(c.createdAt).toLocaleString()}
-                </p>
-              </li>
-            ))}
-          </ul>
+    <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-blue-50 py-16">
+      <section className="max-w-5xl mx-auto px-6">
+        {user?.id === article.author.id && (
+          <div className="flex justify-end mb-6">
+            <button
+              onClick={deleteArticle}
+              className="flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 border border-red-200 px-4 py-2 rounded-lg transition"
+            >
+              <LuTrash className="size-4" />
+              <span>Borrar artículo</span>
+            </button>
+          </div>
         )}
+
+        <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm px-8 py-10">
+          <h1 className="text-4xl font-bold text-neutral-900 mb-4">
+            {article.title}
+          </h1>
+          <p className="text-neutral-600 mb-6 flex flex-wrap items-center gap-2 text-sm">
+            <NavLink
+              to={`/users/${article.author.id}`}
+              className="font-medium text-neutral-800"
+            >
+              {article.author.username}
+            </NavLink>
+            <span>&middot;</span>
+            <LuCalendar className="inline size-4 mb-0.5" />
+            {dayjs(article.createdAt).locale("es").fromNow()}
+          </p>
+
+          {article.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-6">
+              {article.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {stats && (
+            <div className="text-neutral-600 mb-6 flex items-center gap-x-6 text-sm">
+              <span className="flex items-center gap-x-2">
+                <LuEye /> {stats.views}
+              </span>
+              <span className="flex items-center gap-x-2">
+                <LuThumbsUp /> {stats.likes + +liked}
+              </span>
+              <span className="flex items-center gap-x-2">
+                <LuShare2 /> {stats.shares}
+              </span>
+            </div>
+          )}
+
+          <article className="prose max-w-none mb-10 text-neutral-800 leading-relaxed">
+            <p>{article.content}</p>
+          </article>
+
+          <div className="flex justify-end text-neutral-700 gap-x-6">
+            <button
+              onClick={likePost}
+              className={twJoin(
+                "flex items-center gap-x-2 px-3 py-1.5 rounded-lg border transition",
+                liked
+                  ? "border-neutral-300 text-neutral-400 bg-neutral-50"
+                  : "border-neutral-300 hover:bg-neutral-100 cursor-pointer",
+              )}
+            >
+              <LuThumbsUp
+                className={twJoin("size-4", liked && "fill-neutral-400")}
+              />
+              <span>Like</span>
+            </button>
+
+            <button
+              onClick={sharePost}
+              className="flex items-center gap-x-2 px-3 py-1.5 rounded-lg border border-neutral-300 hover:bg-neutral-100 cursor-pointer transition"
+            >
+              <LuShare />
+              <span>Compartir</span>
+            </button>
+          </div>
+        </div>
+
+        <section className="mt-12">
+          <h2 className="text-2xl font-semibold mb-4">
+            Comentarios ({comments.length})
+          </h2>
+          {comments.length === 0 ? (
+            <p className="text-neutral-600 italic">
+              Aún no hay comentarios. Sé el primero en opinar.
+            </p>
+          ) : (
+            <ul className="space-y-4">
+              {comments.map((c: Comment) => (
+                <li
+                  key={c._id}
+                  className="bg-white border border-neutral-200 rounded-xl p-4 shadow-sm"
+                >
+                  <p className="text-neutral-800 mb-2">{c.content}</p>
+                  <p className="text-sm text-neutral-500">
+                    <NavLink
+                      to={`/users/${c.author.id}`}
+                      className="cursor-pointer"
+                    >
+                      {c.author.username}
+                    </NavLink>{" "}
+                    • {new Date(c.createdAt).toLocaleString()}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </section>
     </main>
   );

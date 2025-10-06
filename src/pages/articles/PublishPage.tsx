@@ -10,6 +10,7 @@ const PublishPage = () => {
   const navigate = useNavigate();
   const { articlesClient, analystClient } = useClients();
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(CreateArticleRequest),
@@ -23,104 +24,135 @@ const PublishPage = () => {
   const { data: topTagsData } = useQuery({
     queryKey: ["top-tags"],
     queryFn: () => analystClient.findTopTags(),
-  })
-  const topTags = topTagsData?.body.map(res => res.tag);
+  });
+
+  const topTags = topTagsData?.body.map((res) => res.tag);
 
   const onSubmit = async (data: CreateArticleRequest) => {
     try {
+      setSubmitting(true);
       const res = await articlesClient.createArticle({ body: data });
       navigate(`/articles/${res.body._id}`);
     } catch (e: unknown) {
       console.error(e);
       setError("Algo salió mal :(");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <main className="">
-      <h1 className="text-center font-semibold text-3xl">
+    <main className="py-10 px-4">
+      <h1 className="text-center font-bold text-3xl text-neutral-900 mb-10">
         Publicar un artículo
       </h1>
 
       <form
-        className="rounded-md max-w-md mx-auto px-6 py-4 my-8 space-y-6"
+        className="bg-white rounded-lg shadow-sm max-w-2xl mx-auto px-6 py-8 space-y-6 border border-neutral-200"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <input
-          placeholder="Título"
-          className="border border-neutral-950 rounded-md px-2 py-1 w-full"
-          {...form.register("title", { required: true })}
-        />
-        <textarea
-          placeholder="Contenido..."
-          className="border border-neutral-950 rounded-md px-2 py-1 w-full min-h-50"
-          {...form.register("content", { required: true })}
-        />
+        <div>
+          <label className="block text-sm font-medium text-neutral-700 mb-1">
+            Título
+          </label>
+          <input
+            placeholder="Introduce un título llamativo"
+            className="border border-neutral-300 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 rounded-md px-3 py-2 w-full transition"
+            {...form.register("title", { required: true })}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-neutral-700 mb-1">
+            Contenido
+          </label>
+          <textarea
+            placeholder="Escribe el contenido de tu artículo..."
+            className="border border-neutral-300 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 rounded-md px-3 py-2 w-full min-h-[200px] resize-y transition"
+            {...form.register("content", { required: true })}
+          />
+        </div>
 
         <Controller
           control={form.control}
           name="tags"
           render={({ field }) => (
-            <>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {field.value.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="bg-neutral-100 px-2 py-1 rounded-md flex items-center gap-1"
-                  >
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => field.onChange(field.value.filter((_, j) => j != i))}
-                      className="">
-                      ×
-                    </button>
-                  </span>
-                ))}
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">
+                Etiquetas
+              </label>
+
+              {field.value.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {field.value.map((tag, i) => (
+                    <span
+                      key={i}
+                      className="bg-neutral-100 text-neutral-800 px-2 py-1 rounded-md flex items-center gap-2 text-sm"
+                    >
+                      #{tag}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          field.onChange(field.value.filter((_, j) => j !== i))
+                        }
+                        className="text-neutral-500 hover:text-neutral-800 transition enabled:cursor-pointer"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
               <input
                 placeholder="Escribe una etiqueta y presiona Enter"
-                className="border border-neutral-950 rounded-md px-2 py-1 w-full"
+                className="border border-neutral-300 focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 rounded-md px-3 py-2 w-full transition"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && e.currentTarget.value.trim()) {
                     e.preventDefault();
-                    const newTag = e.currentTarget.value.trim();
+                    const newTag = e.currentTarget.value.trim().toLowerCase();
                     if (!field.value.includes(newTag))
                       field.onChange([...field.value, newTag]);
-
                     e.currentTarget.value = "";
                   }
                 }}
               />
+
               {topTags && topTags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-3">
                   {topTags.map((tag) => (
                     <button
                       key={tag}
                       type="button"
                       onClick={() => {
-                        if (!field.value.includes(tag)) field.onChange([...field.value, tag]);
+                        if (!field.value.includes(tag))
+                          field.onChange([...field.value, tag]);
                       }}
-                      className="text-sm bg-neutral-100 hover:bg-neutral-300 rounded-md px-2 py-1">
+                      className="text-sm bg-neutral-100 hover:bg-neutral-200 rounded-md px-2 py-1 text-neutral-700 transition enabled:cursor-pointer"
+                    >
                       + {tag}
                     </button>
                   ))}
                 </div>
               )}
-            </>
+            </div>
           )}
         />
 
         <div className="text-center">
           <button
             type="submit"
-            className="bg-neutral-950 text-white rounded-md px-5 py-2 cursor-pointer"
+            disabled={submitting}
+            className="bg-neutral-900 text-white rounded-md px-6 py-2 font-medium hover:bg-neutral-800 disabled:opacity-50 transition"
           >
-            ¡Publicar!
-          </button>{" "}
+            {submitting ? "Publicando..." : "¡Publicar!"}
+          </button>
         </div>
       </form>
-      {error && <p className="text-red-600 text-center">{error}</p>}
+
+      {error && (
+        <p className="text-red-600 text-center mt-4 font-medium">{error}</p>
+      )}
     </main>
   );
 };
