@@ -22,7 +22,7 @@ const HomePage = () => {
   const articles = data?.body ?? [];
 
   return (
-    <main className="relative min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden">
       <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-200/40 via-purple-200/30 to-transparent rounded-full blur-3xl animate-pulse -z-10"></div>
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tr from-indigo-300/30 via-blue-100/40 to-transparent rounded-full blur-3xl animate-pulse -z-10"></div>
 
@@ -35,7 +35,7 @@ const HomePage = () => {
         </p>
       </section>
 
-      <section className="max-w-4xl mx-auto px-4 mt-10">
+      <section className="max-w-4xl mx-auto px-4 mt-2">
         {isPending && (
           <p className="text-center text-slate-500 animate-pulse">
             Cargando artículos...
