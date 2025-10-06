@@ -10,8 +10,9 @@ import {
   LuThumbsUp,
   LuTrash,
   LuCalendar,
+  LuMessageCircle,
 } from "react-icons/lu";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEventHandler } from "react";
 import { env } from "../../env";
 import { useAuth } from "../../hooks/use-auth";
 import { getDeviceInfo } from "../../util/device-info";
@@ -24,6 +25,7 @@ const ArticlePage = () => {
   const { articlesClient, engagementClient } = useClients();
   const [mounted, setMounted] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [commentInput, setCommentInput] = useState("");
 
   const { data: articleData } = useQuery({
     queryKey: ["article", id],
@@ -38,7 +40,7 @@ const ArticlePage = () => {
     enabled: id !== undefined,
   });
 
-  const { data: commentsData } = useQuery({
+  const { data: commentsData, refetch: refetchComments } = useQuery({
     queryKey: ["post-comments", id],
     queryFn: () =>
       articlesClient.getCommentsByPost({
@@ -57,6 +59,22 @@ const ArticlePage = () => {
     setMounted(true);
   }, [mounted, engagementClient, id]);
 
+  const publishComment: FormEventHandler = async (e) => {
+    e.preventDefault();
+
+    if (commentInput.length === 0) return;
+
+    await articlesClient.createComment({
+      body: {
+        postId: article._id,
+        content: commentInput,
+      },
+    });
+
+    setCommentInput("");
+    await refetchComments();
+  };
+
   if (articleData === undefined)
     return (
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-neutral-50 to-blue-50">
@@ -67,7 +85,7 @@ const ArticlePage = () => {
   if (articleData.status === 404)
     return (
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-neutral-50 to-blue-50">
-        <p className="text-neutral-500">No se encontró el artículo 😕</p>
+        <p className="text-neutral-500">No se encontró el artículo :(</p>
       </main>
     );
 
@@ -197,6 +215,29 @@ const ArticlePage = () => {
           <h2 className="text-2xl font-semibold mb-4">
             Comentarios ({comments.length})
           </h2>
+
+          <form
+            onSubmit={publishComment}
+            className="bg-white border border-neutral-200 rounded-xl shadow-sm p-4 mb-8"
+          >
+            <textarea
+              placeholder="Escribe un comentario..."
+              value={commentInput}
+              onChange={(e) => setCommentInput(e.target.value)}
+              className="w-full border border-neutral-300 rounded-lg p-3 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none min-h-[100px] transition"
+            />
+            <div className="flex justify-end mt-3">
+              <button
+                type="submit"
+                disabled={commentInput.trim().length === 0}
+                className="flex items-center gap-2 bg-blue-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                <LuMessageCircle className="size-4" />
+                Comentar
+              </button>
+            </div>
+          </form>
+
           {comments.length === 0 ? (
             <p className="text-neutral-600 italic">
               Aún no hay comentarios. Sé el primero en opinar.

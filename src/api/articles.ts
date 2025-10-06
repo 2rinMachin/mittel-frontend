@@ -62,6 +62,17 @@ export const contract = c.router(
         200: z.array(Comment),
       },
     },
+    createComment: {
+      method: "POST",
+      path: "/comments",
+      body: z.object({
+        postId: z.string().nonempty(),
+        content: z.string().trim().nonempty(),
+      }),
+      responses: {
+        201: Comment,
+      },
+    },
   },
   {
     strictStatusCodes: true,

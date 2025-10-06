@@ -18,6 +18,17 @@ export const contract = c.router(
         200: z.array(z.object({ tag: z.string() })),
       },
     },
+    findTopArticles: {
+      method: "GET",
+      path: "/articles/top",
+      responses: {
+        200: z.array(
+          z.object({
+            article_id: z.string(),
+          }),
+        ),
+      },
+    },
     countActiveUsers: {
       method: "GET",
       path: "/users/countactive",

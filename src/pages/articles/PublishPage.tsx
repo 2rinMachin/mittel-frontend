@@ -26,7 +26,23 @@ const PublishPage = () => {
     queryFn: () => analystClient.findTopTags(),
   });
 
+  const { data: topArticlesData } = useQuery({
+    queryKey: ["top-articles"],
+    queryFn: () => analystClient.findTopArticles(),
+  });
+
   const topTags = topTagsData?.body.map((res) => res.tag);
+  const topArticles = topArticlesData?.body;
+
+  const openTopArticle = () => {
+    if (!topArticles) return;
+
+    const article = topArticles[Math.floor(Math.random() * topArticles.length)];
+    window.open(
+      `${window.location.origin}/articles/${article.article_id}`,
+      "_blank",
+    );
+  };
 
   const onSubmit = async (data: CreateArticleRequest) => {
     try {
@@ -46,6 +62,24 @@ const PublishPage = () => {
       <h1 className="text-center font-bold text-3xl text-neutral-900 mb-10">
         Publicar un artículo
       </h1>
+
+      {topArticles && topArticles.length > 0 && (
+        <section className="max-w-2xl mx-auto mb-10 bg-gradient-to-r from-blue-50 to-neutral-50 border border-blue-100 rounded-lg px-6 py-5 shadow-sm">
+          <h2 className="text-lg font-semibold text-neutral-800 mb-2">
+            ¿Necesitas inspiración?
+          </h2>
+          <p className="text-neutral-600 mb-4">
+            Inspírate con algunos de los artículos más destacados del momento
+            antes de escribir el tuyo.
+          </p>
+          <button
+            onClick={openTopArticle}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md px-4 py-2 transition cursor-pointer"
+          >
+            Ver un artículo destacado
+          </button>
+        </section>
+      )}
 
       <form
         className="bg-white rounded-lg shadow-sm max-w-2xl mx-auto px-6 py-8 space-y-6 border border-neutral-200"
