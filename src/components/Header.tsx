@@ -4,6 +4,16 @@ import { LuLogOut, LuPencil, LuUser } from "react-icons/lu";
 
 const links = [
   {
+    label: "Artículos",
+    to: "/articles",
+    authenticated: false,
+  },
+  {
+    label: "Autores",
+    to: "/users",
+    authenticated: false,
+  },
+  {
     label: "Publicar",
     to: "/publish",
     authenticated: true,

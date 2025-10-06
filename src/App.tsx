@@ -10,6 +10,8 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ArticlePage from "./pages/articles/ArticlePage";
 import UserPage from "./pages/users/UserPage";
 import PublishPage from "./pages/articles/PublishPage";
+import SearchArticlesPage from "./pages/SearchPage";
+import SearchUsersPage from "./pages/users/SearchUsersPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,7 +33,9 @@ const App = () => (
               <Route path="*" Component={NotFoundPage} />
               <Route path="login" Component={LoginPage} />
               <Route path="register" Component={RegisterPage} />
+              <Route path="articles" Component={SearchArticlesPage} />
               <Route path="articles/:id" Component={ArticlePage} />
+              <Route path="users" Component={SearchUsersPage} />
               <Route path="users/:id" Component={UserPage} />
               <Route path="publish" Component={PublishPage} />
             </Routes>

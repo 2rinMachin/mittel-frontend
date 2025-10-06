@@ -3,6 +3,7 @@ import { createUsersClient } from "../api/users";
 import { createArticlesClient } from "../api/articles";
 import { ClientsContext, type ClientsContextValue } from "./ClientsContext";
 import { createEngagementClient } from "../api/engagement";
+import { createDiscoveryClient } from "../api/discovery";
 
 export interface Props {
   children: ReactNode | null;
@@ -18,6 +19,7 @@ export const ClientsProvider = ({ children }: Props) => {
       usersClient: createUsersClient(token),
       articlesClient: createArticlesClient(token),
       engagementClient: createEngagementClient(token),
+      discoveryClient: createDiscoveryClient(token),
     };
   };
 
