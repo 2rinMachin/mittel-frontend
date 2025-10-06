@@ -135,6 +135,17 @@ const ArticlePage = () => {
         Por {article.author.username} •{" "}
         {new Date(article.createdAt).toLocaleDateString()}
       </p>
+      {article.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {article.tags.map((tag) => (
+            <span
+              key={tag}
+              className="bg-neutral-100 text-neutral-700 text-sm px-2 py-1 rounded-md">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
       {stats && (
         <div className="text-neutral-600 mb-4 flex items-center gap-x-4">
           <span className="flex flex-row gap-x-2 items-center">
