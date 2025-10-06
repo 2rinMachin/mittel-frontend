@@ -40,8 +40,8 @@ const SearchUsersPage = () => {
 
       <section className="max-w-4xl mx-auto mt-10 min-h-[200px]">
         {debouncedQuery === "" ? (
-          <p className="text-center text-neutral-600 mt-10">
-            Escribe algo para comenzar tu búsqueda.
+          <p className="text-center text-neutral-500 mt-10 italic">
+            Escribe algo para comenzar a buscar.
           </p>
         ) : isFetching ? (
           <p className="text-center text-neutral-600 mt-10 animate-pulse">

@@ -23,7 +23,7 @@ const SearchArticlesPage = () => {
   return (
     <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-blue-50 py-16">
       <section className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center text-neutral-900 mb-10">
+        <h1 className="font-semibold text-3xl text-center mb-10 bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent">
           Buscar artículos
         </h1>
 
@@ -38,7 +38,7 @@ const SearchArticlesPage = () => {
 
         {debouncedQuery === "" ? (
           <p className="text-center text-neutral-500 italic">
-            Escribe algo para comenzar a buscar
+            Escribe algo para comenzar a buscar.
           </p>
         ) : isFetching || articles === undefined ? (
           <p className="text-center text-neutral-500 animate-pulse">
