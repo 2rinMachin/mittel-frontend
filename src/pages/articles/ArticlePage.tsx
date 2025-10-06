@@ -221,7 +221,12 @@ const ArticlePage = () => {
             className="bg-white border border-neutral-200 rounded-xl shadow-sm p-4 mb-8"
           >
             <textarea
-              placeholder="Escribe un comentario..."
+              disabled={!user}
+              placeholder={
+                user
+                  ? "Escribe un comentario..."
+                  : "Inicia sesión para comentar!"
+              }
               value={commentInput}
               onChange={(e) => setCommentInput(e.target.value)}
               className="w-full border border-neutral-300 rounded-lg p-3 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none min-h-[100px] transition"
@@ -229,7 +234,7 @@ const ArticlePage = () => {
             <div className="flex justify-end mt-3">
               <button
                 type="submit"
-                disabled={commentInput.trim().length === 0}
+                disabled={!user || commentInput.trim().length === 0}
                 className="flex items-center gap-2 bg-blue-600 text-white font-medium px-4 py-2 rounded-lg enabled:hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 <LuMessageCircle className="size-4" />
