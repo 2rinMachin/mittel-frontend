@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
-import { useClients } from "../hooks/use-clients";
-import ArticleList from "../components/ArticleList";
+import { useClients } from "../../hooks/use-clients";
+import ArticleList from "../../components/ArticleList";
 
 const SearchArticlesPage = () => {
   const { discoveryClient } = useClients();

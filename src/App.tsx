@@ -10,7 +10,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ArticlePage from "./pages/articles/ArticlePage";
 import UserPage from "./pages/users/UserPage";
 import PublishPage from "./pages/articles/PublishPage";
-import SearchArticlesPage from "./pages/SearchPage";
+import SearchArticlesPage from "./pages/articles/SearchArticlesPage";
 import SearchUsersPage from "./pages/users/SearchUsersPage";
 
 const queryClient = new QueryClient({
